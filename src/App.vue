@@ -17,7 +17,7 @@ import {
 export default {
     setup() {
         const state = reactive({
-            location: 'signIn',
+            location: 'loggedIn',
         })
         return {
             state,

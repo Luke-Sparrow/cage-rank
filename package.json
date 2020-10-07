@@ -12,7 +12,8 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "nodemon": "^2.0.4",
-    "vue": "^3.0.0-0"
+    "vue": "^3.0.0-0",
+    "vuedraggable": "^2.24.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
