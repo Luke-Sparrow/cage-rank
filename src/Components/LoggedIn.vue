@@ -1,10 +1,10 @@
 <template>
 <h1>Logged In!</h1>
 <div class="drop-zone" @drop="onDrop($event, 1)" @dragover.prevent @dragenter.prevent>
-    <div v-for="item in listOne" :key="item.id" class="drag-el" :class="'toggleDrag'" draggable="true" @dragstart="startDrag($event, item)">{{ item.title }}</div>
+    <div v-for="item in items" :key="item.id" class="drag-el" :class="'toggleDrag'" draggable="true" @dragstart="startDrag($event, item)">{{ item.title }}</div>
 </div>
 <div class="drop-zone" @drop="onDrop($event, 2)" @dragover.prevent @dragenter.prevent>
-    <div v-for="item in listTwo" :key="item.id" class="drag-el" :class="{'dragging': isDragging}" draggable="true" @dragstart="startDrag($event, item)">{{ item.title }}</div>
+
 </div>
 <button @click="$emit('set-location-to-sign-in')">Sign Out</button>
 <button @click="$emit('set-location-to-home-screen')">Home Screen</button>
@@ -12,7 +12,6 @@
 
 <script>
 import {
-    computed,
     reactive,
     ref
 } from 'vue'
@@ -41,9 +40,6 @@ export default {
             }
         ]);
 
-        const listOne = computed(() => items.filter(item => item.list === 1))
-        const listTwo = computed(() => items.filter(item => item.list === 2))
-
         function startDrag(evt, item) {
             isDragging.value = !isDragging.value
             evt.dataTransfer.dropEffect = 'move'
@@ -60,13 +56,31 @@ export default {
             console.log(item)
         }
 
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.draggable:not(.dragging)')]
+
+            draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect()
+                const offset = y - box.top - box.height / 2
+                if (offset < 0 && offset > closest.offset) {
+                    return {
+                        offset: offset,
+                        element: child
+                    }
+                } else {
+                    return closest
+                }
+            }, {
+                offset: Number.NEGATIVE_INFINITY
+            })
+        }
+
         return {
             items,
-            listOne,
-            listTwo,
             startDrag,
             onDrop,
-            isDragging
+            isDragging,
+            getDragAfterElement
         }
     }
 }

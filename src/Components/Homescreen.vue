@@ -1,21 +1,18 @@
 <template>
 <h1>Home Screen</h1>
-<div class="container">
-    <div v-for="movie in movieList" :key="movie.id" class="draggable">{{movie.name}}</div>
+<div class="container" @dragenter.prevent @dragover.prevent @dragover="onDragOver($event, movieList)">
+    <div v-for="movie in movieList" :key="movie.id" class="draggable" draggable="true" @dragstart="startDrag($event, movie)" @dragend="onDrop($event, movie)">{{movie.name}}</div>
 </div>
-<div class="container">
-    <div v-for="movie in ratedList" :key="movie.id" class="draggable">{{movie.name}}</div>
+<div class="container" @dragenter.prevent @dragover.prevent @dragover="onDragOver($event, ratedList)">
+
 </div>
 <button @click="$emit('set-location-to-sign-in')">Sign Out</button>
 <button @click="$emit('set-location-to-logged-in')">Change Ranking</button>
 </template>
 
 <script>
-import './homeScreen.js'
-import draggable from 'vuedraggable'
 import {
-    onMounted,
-    reactive
+    reactive,
 } from 'vue'
 
 export default {
@@ -37,24 +34,47 @@ export default {
                 id: 3,
                 name: 'Sorcerer\'s apprentice',
                 rating: 3
+            },
+            {
+                id: 4,
+                name: 'Face Off',
+                rating: 4
             }
         ])
 
         const ratedList = reactive([{
-            id: 4,
-            name: 'Face Off',
-            rating: 4
+            id: 5,
+            name: 'Con Air',
+            rating: 0
         }])
 
-        onMounted(() => {
-            let externalScript = document.createElement('script')
-            externalScript.setAttribute('src', './homeScreen.js')
-            document.head.appendChild(externalScript)
-        })
+        function onDrop(evt) {
+            evt.srcElement.classList.remove('dragging')
+
+        }
+
+        function startDrag(evt, movie) {
+            movie
+            evt.srcElement.classList.add('dragging')
+            console.log(evt.target)
+        }
+
+        function onDragOver(evt, list) {
+            // const draggable = document.querySelector('.dragging')
+            evt
+            list
+            console.log(evt.clientY)
+        }
+
+        // function getDragAfterElement(currentList, y) {
+        //     const draggableElements = [...currentList.]
+        // }
 
         return {
-            draggable,
             movieList,
+            startDrag,
+            onDrop,
+            onDragOver,
             ratedList
         }
     }
@@ -78,5 +98,6 @@ export default {
 
 .draggable.dragging {
     opacity: .5;
+    background-color: lightblue;
 }
 </style>
